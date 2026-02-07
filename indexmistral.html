@@ -1,0 +1,1488 @@
+<head>
+    <meta charset="UTF-8">
+    <title>Belote / C.Gasnier</title>
+
+    <!-- PWA -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#3CB371">
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Icône principale -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+
+    <!-- iOS (ajout à l'écran d'accueil) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Belote">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+</head>
+
+
+    <style>
+        body {
+            background: linear-gradient(to bottom, #2E8B57, #3CB371);
+            padding: 5px;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: white;
+        }
+
+        .main-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 5px;
+        }
+
+        .card {
+            transition: transform 0.2s;
+            margin-bottom: 8px;
+            min-height: 100px;
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+        }
+
+        .btn {
+            margin: 3px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+
+        #tableauHistorique tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .team-selector {
+            margin-bottom: 10px;
+        }
+
+        .atout-display {
+            width: 60px;
+            height: 60px;
+            border: 3px solid black;
+            border-radius: 10px;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            margin: 0 auto 5px;
+            color: black;
+        }
+
+        .atout-selector {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .atout-option {
+            width: 40px;
+            height: 40px;
+            border: 2px solid black;
+            border-radius: 8px;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .title-container {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            font-size: 1.3rem;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        .score-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 3px;
+            margin-bottom: 8px;
+        }
+
+        .score-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 0;
+        }
+
+        .score-input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .score-input {
+            width: 60px;
+            height: 40px;
+            font-size: 1.2rem;
+            text-align: center;
+            margin: 0 5px;
+            padding: 0;
+        }
+
+        .score-input.active {
+            border: 3px solid black !important;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .team-score {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .team-label {
+            margin-right: 5px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"] {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .card-header {
+            padding: 0.3rem 0.6rem;
+        }
+
+        .card-body {
+            padding: 0.5rem;
+        }
+
+        .card-text.fs-3 {
+            font-size: 1.5rem !important;
+            margin-bottom: 0;
+        }
+
+        #tableauHistorique {
+            font-size: 0.7rem;
+            margin-top: 10px;
+            color: white;
+        }
+
+        #tableauHistorique th, #tableauHistorique td {
+            padding: 0.3rem;
+        }
+
+        .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.7rem;
+        }
+
+        .modal-dialog {
+            max-width: 90%;
+        }
+
+        .modal-body input, .modal-body select {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .historique-container {
+            max-height: 150px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+
+        .donneur-container {
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .donneur-highlight {
+            color: black;
+            font-weight: bold;
+        }
+
+        .equipes-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .equipe-card {
+            width: 48%;
+        }
+
+        .scores-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .score-group {
+            display: flex;
+            align-items: center;
+            width: 48%;
+        }
+
+        .score-group input {
+            margin-left: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main-container">
+        <div class="atout-selector" id="atoutSelector" style="display: none;">
+            <div class="atout-option" onclick="selectAtout('♥', 'text-danger')">♥</div>
+            <div class="atout-option" onclick="selectAtout('♠', 'text-dark')">♠</div>
+            <div class="atout-option" onclick="selectAtout('♦', 'text-danger')">♦</div>
+            <div class="atout-option" onclick="selectAtout('♣', 'text-dark')">♣</div>
+        </div>
+
+        <div class="title-container">
+            <div class="atout-display" id="atoutDisplay"></div>
+            <div class="title">Belote / C. Gasnier</div>
+        </div>
+
+        <div class="donneur-container">
+            Donneur : <span id="donneur" class="donneur-highlight">Aucun</span>
+        </div>
+
+        <div class="equipes-container">
+            <div class="equipe-card">
+                <div class="card">
+                    <div class="card-header bg-primary text-white p-1">
+                        <h6 class="card-title mb-0" id="nomEquipe1">Équipe 1</h6>
+                    </div>
+                    <div class="card-body p-1">
+                        <p class="card-text fs-3 mb-0" id="scoreEquipe1">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="equipe-card">
+                <div class="card">
+                    <div class="card-header bg-danger text-white p-1">
+                        <h6 class="card-title mb-0" id="nomEquipe2">Équipe 2</h6>
+                    </div>
+                    <div class="card-body p-1">
+                        <p class="card-text fs-3 mb-0" id="scoreEquipe2">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-12 text-center">
+                <p class="fs-6 m-1">Tour : <span id="tourActuel">1/12</span></p>
+            </div>
+        </div>
+
+        <div class="scores-container">
+            <div class="score-group">
+                <div class="team-label">Équipe 1 :</div>
+                <input type="text" id="pointsEquipe1" class="form-control score-input" placeholder="0" onclick="setActiveTeam(1)" readonly>
+            </div>
+            <div class="score-group">
+                <div class="team-label">Équipe 2 :</div>
+                <input type="text" id="pointsEquipe2" class="form-control score-input" placeholder="0" onclick="setActiveTeam(2)" readonly>
+            </div>
+        </div>
+
+        <div class="score-buttons">
+            <button class="btn btn-outline-light score-btn" onclick="ajouterChiffre(0)">0</button>
+            <button class="btn btn-outline-light score-btn" onclick="ajouterChiffre(1)">1</button>
+            <button class="btn btn-outline-light score-btn" onclick="ajouterChiffre(2)">2</button>
+            <button class="btn btn-outline-light score-btn" onclick="ajouterChiffre(3)">3</button>
+            <button class="btn btn-outline-light score-btn" onclick="ajouterChiffre(4)">4</button>
+            <button class="btn btn-outline-light score-btn" onclick="ajouterChiffre(5)">5</button>
+            <button class="btn btn-outline-light score-btn" onclick="ajouterChiffre(6)">6</button>
+            <button class="btn btn-outline-light score-btn" onclick="ajouterChiffre(7)">7</button>
+            <button class="btn btn-outline-light score-btn" onclick="ajouterChiffre(8)">8</button>
+            <button class="btn btn-outline-light score-btn" onclick="ajouterChiffre(9)">9</button>
+        </div>
+
+        <div class="d-flex justify-content-center gap-2">
+            <button class="btn btn-primary btn-sm" onclick="demanderAtout()">Valider</button>
+            <button class="btn btn-outline-light btn-sm" onclick="effacerChiffres()">Effacer</button>
+        </div>
+
+        <div class="action-buttons">
+            <div class="team-selector text-center w-100 mb-2">
+                <label class="fs-6">Choisir l'équipe pour Belote/Capot:</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="equipeSelectionnee" id="equipe1" value="0" checked>
+                    <label class="form-check-label fs-6" for="equipe1">Équipe 1</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="equipeSelectionnee" id="equipe2" value="1">
+                    <label class="form-check-label fs-6" for="equipe2">Équipe 2</label>
+                </div>
+            </div>
+
+            <button class="btn btn-success btn-sm" onclick="belote()"><i class="fas fa-heart me-1"></i>Belote</button>
+            <button class="btn btn-danger btn-sm" onclick="capot()"><i class="fas fa-crown me-1"></i>Capot</button>
+            <button class="btn btn-warning btn-sm" onclick="annonceVocale()"><i class="fas fa-volume-up me-1"></i>Vocal</button>
+            <button class="btn btn-info btn-sm" onclick="annulerDerniereSaisie()"><i class="fas fa-undo me-1"></i>Annuler</button>
+            <button class="btn btn-secondary btn-sm" onclick="confirmationNouvellePartie()"><i class="fas fa-redo me-1"></i>Nouvelle Partie</button>
+        </div>
+
+        <div class="historique-container">
+            <h6 class="text-center mb-1">Historique des tours</h6>
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Tour</th>
+                        <th>Équipe 1</th>
+                        <th>Équipe 2</th>
+                        <th>Atout</th>
+                        <th>Donneur</th>
+                        <th>Événements</th>
+                    </tr>
+                </thead>
+                <tbody id="tableauHistorique">
+                    <!-- Les lignes seront ajoutées dynamiquement -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modale pour la saisie des joueurs -->
+    <div class="modal fade" id="saisieJoueursModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nouvelle Partie</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formJoueurs">
+                        <div class="mb-2">
+                            <label for="joueur1" class="form-label">Ton nom</label>
+                            <input type="text" class="form-control" id="joueur1" value="Christophe">
+                        </div>
+                        <div class="mb-2">
+                            <label for="joueur3" class="form-label">Nom du joueur à gauche</label>
+                            <input type="text" class="form-control" id="joueur3" value="Joueur Gauche">
+                        </div>
+                        <div class="mb-2">
+                            <label for="joueur2" class="form-label">Nom de ton partenaire</label>
+                            <input type="text" class="form-control" id="joueur2" value="Partenaire">
+                        </div>
+                        <div class="mb-2">
+                            <label for="joueur4" class="form-label">Nom du joueur à droite</label>
+                            <input type="text" class="form-control" id="joueur4" value="Joueur Droite">
+                        </div>
+                        <div class="mb-2">
+                            <label for="premierDonneur" class="form-label">Premier donneur</label>
+                            <select class="form-select" id="premierDonneur">
+                                <option value="0">Christophe (toi)</option>
+                                <option value="1">Joueur Gauche</option>
+                                <option value="2">Partenaire</option>
+                                <option value="3">Joueur Droite</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="demarrerPartie()">Commencer la Partie</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Variables globales
+        let joueurs = [];
+        let tourActuel = 1;
+        let scores = [0, 0];
+        let nomsEquipes = ["Équipe 1", "Équipe 2"];
+        let historique = [];
+        let atoutActuel = "";
+        let atoutIconClass = "";
+        let atoutColorClass = "";
+        let equipeActive = 1;
+        let partieCommencee = false;
+        let donneurIndex = 0;
+        let donneurs = [];
+
+        // Fonction pour démarrer la partie
+        function demarrerPartie() {
+            joueurs = [
+                document.getElementById("joueur1").value,
+                document.getElementById("joueur3").value,
+                document.getElementById("joueur2").value,
+                document.getElementById("joueur4").value
+            ];
+
+            nomsEquipes = [
+                `${joueurs[0]} & ${joueurs[2]}`,
+                `${joueurs[1]} & ${joueurs[3]}`
+            ];
+
+            // Initialiser la liste des donneurs dans l'ordre : toi, joueur gauche, partenaire, joueur droite
+            donneurs = [...joueurs];
+
+            // Récupérer l'index du premier donneur
+            donneurIndex = parseInt(document.getElementById("premierDonneur").value);
+
+            // Mettre à jour l'interface
+            document.getElementById("nomEquipe1").textContent = nomsEquipes[0];
+            document.getElementById("nomEquipe2").textContent = nomsEquipes[1];
+            document.getElementById("tourActuel").textContent = `${tourActuel}/12`;
+
+            // Afficher le sélecteur d'atout
+            document.getElementById("atoutSelector").style.display = "flex";
+
+            // Réinitialiser les champs de score
+            document.getElementById("pointsEquipe1").value = "";
+            document.getElementById("pointsEquipe2").value = "";
+
+            // Mettre à jour le donneur
+            mettreAJourDonneur();
+
+            // Fermer la modale
+            const modal = bootstrap.Modal.getInstance(document.getElementById("saisieJoueursModal"));
+            modal.hide();
+
+            // Bloquer le clavier tactile
+            partieCommencee = true;
+        }
+
+            // Fonction pour mettre à jour le donneur
+            function mettreAJourDonneur() {
+                const donneurElement = document.getElementById("donneur");
+                donneurElement.textContent = donneurs[donneurIndex];
+
+                // Annoncer vocalement le donneur
+                const messageDonneur = `Le donneur est ${donneurs[donneurIndex]}`;
+                const utteranceDonneur = new SpeechSynthesisUtterance(messageDonneur);
+                window.speechSynthesis.speak(utteranceDonneur);
+            }
+
+            // Fonction pour définir l'équipe active
+            function setActiveTeam(team) {
+                equipeActive = team;
+
+                // Retirer la classe 'active' de toutes les cases de score
+                document.getElementById("pointsEquipe1").classList.remove("active");
+                document.getElementById("pointsEquipe2").classList.remove("active");
+
+                // Ajouter la classe 'active' à la case de score sélectionnée
+                document.getElementById(`pointsEquipe${team}`).classList.add("active");
+            }
+
+            // Fonction pour ajouter un chiffre au score
+            function ajouterChiffre(chiffre) {
+                if (!partieCommencee) {
+                    alert("Veuillez d'abord commencer une partie.");
+                    return;
+                }
+
+                const input = document.getElementById(`pointsEquipe${equipeActive}`);
+                let valeurActuelle = input.value;
+
+                // Si la valeur actuelle est "0" ou vide, on remplace, sinon on ajoute
+                if (valeurActuelle === "0" || valeurActuelle === "") {
+                    valeurActuelle = chiffre.toString();
+                } else {
+                    valeurActuelle += chiffre.toString();
+                }
+
+                // Convertir en nombre pour vérifier la limite
+                const valeurNumerique = parseInt(valeurActuelle);
+
+                // Limiter à 162 points maximum
+                if (valeurNumerique <= 162) {
+                    input.value = valeurActuelle;
+
+                    // Calculer automatiquement le score de l'autre équipe
+                    const autreEquipe = equipeActive === 1 ? 2 : 1;
+                    const autreInput = document.getElementById(`pointsEquipe${autreEquipe}`);
+                    const valeurActuelleAutre = input.value === "" ? 0 : parseInt(input.value);
+                    const autreValeur = 162 - valeurActuelleAutre;
+
+                    if (autreValeur >= 0) {
+                        autreInput.value = autreValeur;
+                    } else {
+                        autreInput.value = "";
+                    }
+                } else {
+                    alert("Le score maximum par tour est de 162 points.");
+                }
+            }
+
+            // Fonction pour effacer les chiffres
+            function effacerChiffres() {
+                document.getElementById("pointsEquipe1").value = "";
+                document.getElementById("pointsEquipe2").value = "";
+            }
+
+            // Fonction pour sélectionner un atout
+            function selectAtout(symbol, colorClass) {
+                atoutActuel = symbol;
+                atoutColorClass = colorClass;
+
+                const atoutDisplay = document.getElementById("atoutDisplay");
+                atoutDisplay.innerHTML = `<span class="${colorClass}" style="font-size: 3rem;">${symbol}</span>`;
+            }
+
+            // Fonction pour demander l'atout
+            function demanderAtout() {
+                let points1 = parseInt(document.getElementById("pointsEquipe1").value) || 0;
+                let points2 = parseInt(document.getElementById("pointsEquipe2").value) || 0;
+
+                // Vérifier que les scores sont valides
+                if ((points1 < 0 || points1 > 162) && (points2 < 0 || points2 > 162)) {
+                    alert("Veuillez entrer des scores valides pour au moins une équipe (entre 0 et 162).");
+                    return;
+                }
+
+                // Vérifier que la somme des scores est correcte
+                if (points1 + points2 !== 162) {
+                    alert("La somme des scores doit être égale à 162.");
+                    return;
+                }
+
+                // Ajouter les points
+                ajouterPoints();
+            }
+
+            // Fonction pour ajouter des points
+            function ajouterPoints() {
+                let points1 = parseInt(document.getElementById("pointsEquipe1").value) || 0;
+                let points2 = parseInt(document.getElementById("pointsEquipe2").value) || 0;
+
+                // Ajouter à l'historique
+                historique.push({
+                    tour: tourActuel,
+                    points1: points1,
+                    points2: points2,
+                    atout: atoutActuel,
+                    donneur: donneurs[donneurIndex],
+                    evenement: ""
+                });
+
+                // Mettre à jour les scores
+                scores[0] += points1;
+                scores[1] += points2;
+
+                // Mettre à jour l'affichage
+                document.getElementById("scoreEquipe1").textContent = scores[0];
+                document.getElementById("scoreEquipe2").textContent = scores[1];
+
+                // Ajouter une ligne à l'historique
+                const tableau = document.getElementById("tableauHistorique");
+                const nouvelleLigne = tableau.insertRow();
+                const celluleTour = nouvelleLigne.insertCell(0);
+                const celluleEquipe1 = nouvelleLigne.insertCell(1);
+                const celluleEquipe2 = nouvelleLigne.insertCell(2);
+                const celluleAtout = nouvelleLigne.insertCell(3);
+                const celluleDonneur = nouvelleLigne.insertCell(4);
+                const celluleEvenement = nouvelleLigne.insertCell(5);
+
+                celluleTour.textContent = tourActuel;
+                celluleEquipe1.textContent = points1;
+                celluleEquipe2.textContent = points2;
+                celluleAtout.textContent = atoutActuel ? atoutActuel : "-";
+                celluleDonneur.textContent = donneurs[donneurIndex];
+                celluleEvenement.textContent = "";
+
+                // Réinitialiser les champs
+                document.getElementById("pointsEquipe1").value = "";
+                document.getElementById("pointsEquipe2").value = "";
+
+                // Réinitialiser l'atout
+                atoutActuel = "";
+                document.getElementById("atoutDisplay").innerHTML = "";
+
+                // Passer au tour suivant
+                if (tourActuel < 12) {
+                    tourActuel++;
+                    document.getElementById("tourActuel").textContent = `${tourActuel}/12`;
+
+                    // Changer de donneur
+                    donneurIndex = (donneurIndex + 1) % 4;
+                    mettreAJourDonneur();
+                } else {
+                    finPartie();
+                }
+            }
+
+            // Fonction pour annuler la dernière saisie
+            function annulerDerniereSaisie() {
+                if (historique.length === 0) {
+                    alert("Il n'y a pas de saisie à annuler.");
+                    return;
+                }
+
+                // Récupérer la dernière saisie
+                const derniereSaisie = historique.pop();
+                const tableau = document.getElementById("tableauHistorique");
+
+                // Retirer la dernière ligne du tableau
+                if (tableau.rows.length > 1) {
+                    tableau.deleteRow(tableau.rows.length - 1);
+                }
+
+                // Mettre à jour les scores
+                scores[0] -= derniereSaisie.points1;
+                scores[1] -= derniereSaisie.points2;
+
+                // Mettre à jour l'affichage
+                document.getElementById("scoreEquipe1").textContent = scores[0];
+                document.getElementById("scoreEquipe2").textContent = scores[1];
+
+                // Mettre à jour le tour actuel
+                if (tourActuel > 1) {
+                    tourActuel--;
+                    document.getElementById("tourActuel").textContent = `${tourActuel}/12`;
+
+                    // Reculer le donneur
+                    donneurIndex = (donneurIndex - 1 + 4) % 4;
+                    mettreAJourDonneur();
+                }
+
+                // Réafficher l'atout du tour précédent si nécessaire
+                if (historique.length > 0) {
+                    const dernierTour = historique[historique.length - 1];
+                    atoutActuel = dernierTour.atout;
+                    const atoutDisplay = document.getElementById("atoutDisplay");
+                    let colorClass = "text-dark";
+                    if (dernierTour.atout === "♥" || dernierTour.atout === "♦") {
+                        colorClass = "text-danger";
+                    }
+                    atoutDisplay.innerHTML = `<span class="${colorClass}" style="font-size: 3rem;">${dernierTour.atout}</span>`;
+                } else {
+                    atoutActuel = "";
+                    document.getElementById("atoutDisplay").innerHTML = "";
+                }
+            }
+
+            // Fonction pour l'annonce vocale
+            function annonceVocale() {
+                const message = `Messieurs-dames, les scores actuels sont : ${nomsEquipes[0]} ${scores[0]}, ${nomsEquipes[1]} ${scores[1]}. Le donneur est ${donneurs[donneurIndex]}.`;
+                const utterance = new SpeechSynthesisUtterance(message);
+                window.speechSynthesis.speak(utterance);
+            }
+
+            // Fonction pour Belote
+            function belote() {
+                const equipeSelectionnee = parseInt(document.querySelector('input[name="equipeSelectionnee"]:checked').value);
+                scores[equipeSelectionnee] += 20;
+                document.getElementById(`scoreEquipe${equipeSelectionnee + 1}`).textContent = scores[equipeSelectionnee];
+
+                // Mettre à jour l'historique
+                if (historique.length > 0) {
+                    historique[historique.length - 1].evenement += "Belote ";
+
+                    // Mettre à jour l'historique visuel
+                    const tableau = document.getElementById("tableauHistorique");
+                    if (tableau.rows.length > 1) {
+                        const derniereLigne = tableau.rows[tableau.rows.length - 1];
+                        derniereLigne.cells[5].textContent = historique[historique.length - 1].evenement;
+                    }
+                }
+
+                const message = `Belote annoncée ! 20 points pour l'équipe ${nomsEquipes[equipeSelectionnee]}.`;
+                const utterance = new SpeechSynthesisUtterance(message);
+                window.speechSynthesis.speak(utterance);
+            }
+
+            // Fonction pour Capot
+            function capot() {
+                const equipeSelectionnee = parseInt(document.querySelector('input[name="equipeSelectionnee"]:checked').value);
+                scores[equipeSelectionnee] += 250;
+                document.getElementById(`scoreEquipe${equipeSelectionnee + 1}`).textContent = scores[equipeSelectionnee];
+
+                // Ajouter un tour spécial pour le capot
+                historique.push({
+                    tour: tourActuel,
+                    points1: 0,
+                    points2: 0,
+                    atout: "",
+                    donneur: donneurs[donneurIndex],
+                    evenement: "Capot"
+                });
+
+                // Mettre à jour l'historique visuel
+                const tableau = document.getElementById("tableauHistorique");
+                const nouvelleLigne = tableau.insertRow();
+                const celluleTour = nouvelleLigne.insertCell(0);
+                const celluleEquipe1 = nouvelleLigne.insertCell(1);
+                const celluleEquipe2 = nouvelleLigne.insertCell(2);
+                const celluleAtout = nouvelleLigne.insertCell(3);
+                const celluleDonneur = nouvelleLigne.insertCell(4);
+                const celluleEvenement = nouvelleLigne.insertCell(5);
+
+                celluleTour.textContent = tourActuel;
+                celluleEquipe1.textContent = "-";
+                celluleEquipe2.textContent = "-";
+                celluleAtout.textContent = "-";
+                celluleDonneur.textContent = donneurs[donneurIndex];
+                celluleEvenement.textContent = "Capot";
+
+                const message = `Capot annoncé ! 250 points pour l'équipe ${nomsEquipes[equipeSelectionnee]}.`;
+                const utterance = new SpeechSynthesisUtterance(message);
+                window.speechSynthesis.speak(utterance);
+            }
+
+            // Fonction pour gérer la fin de partie
+            function finPartie() {
+                let messageGagnant;
+                let messagePerdu;
+                if (scores[0] > scores[1]) {
+                    messageGagnant = `L'équipe gagnante est ${nomsEquipes[0]} avec ${scores[0]} points.`;
+                    messagePerdu = `L'équipe perdante est ${nomsEquipes[1]} avec ${scores[1]} points.`;
+                } else if (scores[1] > scores[0]) {
+                    messageGagnant = `L'équipe gagnante est ${nomsEquipes[1]} avec ${scores[1]} points.`;
+                    messagePerdu = `L'équipe perdante est ${nomsEquipes[0]} avec ${scores[0]} points.`;
+                } else {
+                    messageGagnant = `La partie se termine sur une égalité entre ${nomsEquipes[0]} et ${nomsEquipes[1]} avec ${scores[0]} points chacun.`;
+                    messagePerdu = "";
+                }
+
+                // Annonce du gagnant
+                const utteranceGagnant = new SpeechSynthesisUtterance(messageGagnant);
+                window.speechSynthesis.speak(utteranceGagnant);
+
+                // Annonce du perdant après un délai
+                if (messagePerdu) {
+                    setTimeout(() => {
+                        const utterancePerdu = new SpeechSynthesisUtterance(messagePerdu);
+                        window.speechSynthesis.speak(utterancePerdu);
+                    }, 3000);
+                }
+            }
+
+            // Fonction pour confirmer une nouvelle partie
+            function confirmationNouvellePartie() {
+                if (confirm("Êtes-vous sûr de vouloir quitter la partie en cours ? Tous les scores seront perdus.")) {
+                    // Réinitialiser les variables globales
+                    tourActuel = 1;
+                    scores = [0, 0];
+                    historique = [];
+                    atoutActuel = "";
+                    atoutIconClass = "";
+                    atoutColorClass = "";
+                    equipeActive = 1;
+                    partieCommencee = false;
+                    donneurIndex = 0;
+
+                    // Réinitialiser l'affichage
+                    document.getElementById("scoreEquipe1").textContent = "0";
+                    document.getElementById("scoreEquipe2").textContent = "0";
+                    document.getElementById("tourActuel").textContent = "1/12";
+                    document.getElementById("atoutDisplay").innerHTML = "";
+                    document.getElementById("pointsEquipe1").value = "";
+                    document.getElementById("pointsEquipe2").value = "";
+                    document.getElementById("donneur").textContent = "Aucun";
+
+                    // Réinitialiser complètement le tableau d'historique
+                    const tableau = document.getElementById("tableauHistorique");
+                    while (tableau.rows.length > 1) {
+                        tableau.deleteRow(1);
+                    }
+
+                    // Réafficher la modale pour les noms des joueurs
+                    const modal = new bootstrap.Modal(document.getElementById("saisieJoueursModal"));
+                    modal.show();
+                }
+            }
+
+            // Fonction pour détecter la fermeture de l'onglet ou de la fenêtre
+            window.addEventListener('beforeunload', function(e) {
+                if (partieCommencee) {
+                    e.preventDefault();
+                    e.returnValue = 'Êtes-vous sûr de vouloir quitter ? Vos données ne seront pas sauvegardées.';
+                }
+            });
+
+            // Afficher la modale au chargement de la page
+            window.onload = function() {
+                const modal = new bootstrap.Modal(document.getElementById('saisieJoueursModal'));
+                modal.show();
+            };
+        </script>
+
+        <!-- Service Worker -->
+        <script>
+          if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+              navigator.serviceWorker.register('sw.js').then(function(registration) {
+                console.log('ServiceWorker registration successful');
+              }, function(err) {
+                console.log('ServiceWorker registration failed: ', err);
+              });
+            });
+          }
+        </script>
+
+</body>
+</html>
+
+            // Fonction pour annuler la dernière saisie
+            function annulerDerniereSaisie() {
+                if (historique.length === 0) {
+                    alert("Il n'y a pas de saisie à annuler.");
+                    return;
+                }
+
+                // Récupérer la dernière saisie
+                const derniereSaisie = historique.pop();
+                const tableau = document.getElementById("tableauHistorique");
+
+                // Retirer la dernière ligne du tableau
+                if (tableau.rows.length > 1) {
+                    tableau.deleteRow(tableau.rows.length - 1);
+                }
+
+                // Mettre à jour les scores
+                scores[0] -= derniereSaisie.points1;
+                scores[1] -= derniereSaisie.points2;
+
+                // Mettre à jour l'affichage
+                document.getElementById("scoreEquipe1").textContent = scores[0];
+                document.getElementById("scoreEquipe2").textContent = scores[1];
+
+                // Mettre à jour le tour actuel
+                if (tourActuel > 1) {
+                    tourActuel--;
+                    document.getElementById("tourActuel").textContent = `${tourActuel}/12`;
+
+                    // Reculer le donneur
+                    donneurIndex = (donneurIndex - 1 + 4) % 4;
+                    mettreAJourDonneur();
+                }
+
+                // Réafficher l'atout du tour précédent si nécessaire
+                if (historique.length > 0) {
+                    const dernierTour = historique[historique.length - 1];
+                    atoutActuel = dernierTour.atout;
+                    const atoutDisplay = document.getElementById("atoutDisplay");
+                    let colorClass = "text-dark";
+                    if (dernierTour.atout === "♥" || dernierTour.atout === "♦") {
+                        colorClass = "text-danger";
+                    }
+                    atoutDisplay.innerHTML = `<span class="${colorClass}" style="font-size: 3rem;">${dernierTour.atout}</span>`;
+                } else {
+                    atoutActuel = "";
+                    document.getElementById("atoutDisplay").innerHTML = "";
+                }
+            }
+
+            // Fonction pour l'annonce vocale
+            function annonceVocale() {
+                const message = `Messieurs-dames, les scores actuels sont : ${nomsEquipes[0]} ${scores[0]}, ${nomsEquipes[1]} ${scores[1]}. Le donneur est ${donneurs[donneurIndex]}.`;
+                const utterance = new SpeechSynthesisUtterance(message);
+                window.speechSynthesis.speak(utterance);
+            }
+
+            // Fonction pour Belote
+            function belote() {
+                const equipeSelectionnee = parseInt(document.querySelector('input[name="equipeSelectionnee"]:checked').value);
+                scores[equipeSelectionnee] += 20;
+                document.getElementById(`scoreEquipe${equipeSelectionnee + 1}`).textContent = scores[equipeSelectionnee];
+
+                // Mettre à jour l'historique
+                if (historique.length > 0) {
+                    historique[historique.length - 1].evenement += "Belote ";
+
+                    // Mettre à jour l'historique visuel
+                    const tableau = document.getElementById("tableauHistorique");
+                    if (tableau.rows.length > 1) {
+                        const derniereLigne = tableau.rows[tableau.rows.length - 1];
+                        derniereLigne.cells[5].textContent = historique[historique.length - 1].evenement;
+                    }
+                }
+
+                const message = `Belote annoncée ! 20 points pour l'équipe ${nomsEquipes[equipeSelectionnee]}.`;
+                const utterance = new SpeechSynthesisUtterance(message);
+                window.speechSynthesis.speak(utterance);
+            }
+
+            // Fonction pour Capot
+            function capot() {
+                const equipeSelectionnee = parseInt(document.querySelector('input[name="equipeSelectionnee"]:checked').value);
+                scores[equipeSelectionnee] += 250;
+                document.getElementById(`scoreEquipe${equipeSelectionnee + 1}`).textContent = scores[equipeSelectionnee];
+
+                // Ajouter un tour spécial pour le capot
+                historique.push({
+                    tour: tourActuel,
+                    points1: 0,
+                    points2: 0,
+                    atout: "",
+                    donneur: donneurs[donneurIndex],
+                    evenement: "Capot"
+                });
+
+                // Mettre à jour l'historique visuel
+                const tableau = document.getElementById("tableauHistorique");
+                const nouvelleLigne = tableau.insertRow();
+                const celluleTour = nouvelleLigne.insertCell(0);
+                const celluleEquipe1 = nouvelleLigne.insertCell(1);
+                const celluleEquipe2 = nouvelleLigne.insertCell(2);
+                const celluleAtout = nouvelleLigne.insertCell(3);
+                const celluleDonneur = nouvelleLigne.insertCell(4);
+                const celluleEvenement = nouvelleLigne.insertCell(5);
+
+                celluleTour.textContent = tourActuel;
+                celluleEquipe1.textContent = "-";
+                celluleEquipe2.textContent = "-";
+                celluleAtout.textContent = "-";
+                celluleDonneur.textContent = donneurs[donneurIndex];
+                celluleEvenement.textContent = "Capot";
+
+                const message = `Capot annoncé ! 250 points pour l'équipe ${nomsEquipes[equipeSelectionnee]}.`;
+                const utterance = new SpeechSynthesisUtterance(message);
+                window.speechSynthesis.speak(utterance);
+            }
+
+            // Fonction pour gérer la fin de partie
+            function finPartie() {
+                let messageGagnant;
+                let messagePerdu;
+                if (scores[0] > scores[1]) {
+                    messageGagnant = `L'équipe gagnante est ${nomsEquipes[0]} avec ${scores[0]} points.`;
+                    messagePerdu = `L'équipe perdante est ${nomsEquipes[1]} avec ${scores[1]} points.`;
+                } else if (scores[1] > scores[0]) {
+                    messageGagnant = `L'équipe gagnante est ${nomsEquipes[1]} avec ${scores[1]} points.`;
+                    messagePerdu = `L'équipe perdante est ${nomsEquipes[0]} avec ${scores[0]} points.`;
+                } else {
+                    messageGagnant = `La partie se termine sur une égalité entre ${nomsEquipes[0]} et ${nomsEquipes[1]} avec ${scores[0]} points chacun.`;
+                    messagePerdu = "";
+                }
+
+                // Annonce du gagnant
+                const utteranceGagnant = new SpeechSynthesisUtterance(messageGagnant);
+                window.speechSynthesis.speak(utteranceGagnant);
+
+                // Annonce du perdant après un délai
+                if (messagePerdu) {
+                    setTimeout(() => {
+                        const utterancePerdu = new SpeechSynthesisUtterance(messagePerdu);
+                        window.speechSynthesis.speak(utterancePerdu);
+                    }, 3000);
+                }
+            }
+
+            // Fonction pour confirmer une nouvelle partie
+            function confirmationNouvellePartie() {
+                if (confirm("Êtes-vous sûr de vouloir quitter la partie en cours ? Tous les scores seront perdus.")) {
+                    // Réinitialiser les variables globales
+                    tourActuel = 1;
+                    scores = [0, 0];
+                    historique = [];
+                    atoutActuel = "";
+                    atoutIconClass = "";
+                    atoutColorClass = "";
+                    equipeActive = 1;
+                    partieCommencee = false;
+                    donneurIndex = 0;
+
+                    // Réinitialiser l'affichage
+                    document.getElementById("scoreEquipe1").textContent = "0";
+                    document.getElementById("scoreEquipe2").textContent = "0";
+                    document.getElementById("tourActuel").textContent = "1/12";
+                    document.getElementById("atoutDisplay").innerHTML = "";
+                    document.getElementById("pointsEquipe1").value = "";
+                    document.getElementById("pointsEquipe2").value = "";
+                    document.getElementById("donneur").textContent = "Aucun";
+
+                    // Réinitialiser complètement le tableau d'historique
+                    const tableau = document.getElementById("tableauHistorique");
+                    while (tableau.rows.length > 1) {
+                        tableau.deleteRow(1);
+                    }
+
+                    // Réafficher la modale pour les noms des joueurs
+                    const modal = new bootstrap.Modal(document.getElementById("saisieJoueursModal"));
+                    modal.show();
+                }
+            }
+
+            // Fonction pour détecter la fermeture de l'onglet ou de la fenêtre
+            window.addEventListener('beforeunload', function(e) {
+                if (partieCommencee) {
+                    e.preventDefault();
+                    e.returnValue = 'Êtes-vous sûr de vouloir quitter ? Vos données ne seront pas sauvegardées.';
+                }
+            });
+
+            // Afficher la modale au chargement de la page
+            window.onload = function() {
+                const modal = new bootstrap.Modal(document.getElementById('saisieJoueursModal'));
+                modal.show();
+            };
+        </script>
+
+        <!-- Service Worker -->
+        <script>
+          if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+              navigator.serviceWorker.register('sw.js').then(function(registration) {
+                console.log('ServiceWorker registration successful');
+              }, function(err) {
+                console.log('ServiceWorker registration failed: ', err);
+              });
+            });
+          }
+        </script>
+
+</body>
+</html>
+
+            // Fonction pour annuler la dernière saisie
+            function annulerDerniereSaisie() {
+                if (historique.length === 0) {
+                    alert("Il n'y a pas de saisie à annuler.");
+                    return;
+                }
+
+                // Récupérer la dernière saisie
+                const derniereSaisie = historique.pop();
+                const tableau = document.getElementById("tableauHistorique");
+
+                // Retirer la dernière ligne du tableau
+                if (tableau.rows.length > 1) {
+                    tableau.deleteRow(tableau.rows.length - 1);
+                }
+
+                // Mettre à jour les scores
+                scores[0] -= derniereSaisie.points1;
+                scores[1] -= derniereSaisie.points2;
+
+                // Mettre à jour l'affichage
+                document.getElementById("scoreEquipe1").textContent = scores[0];
+                document.getElementById("scoreEquipe2").textContent = scores[1];
+
+                // Mettre à jour le tour actuel
+                if (tourActuel > 1) {
+                    tourActuel--;
+                    document.getElementById("tourActuel").textContent = `${tourActuel}/12`;
+
+                    // Reculer le donneur
+                    donneurIndex = (donneurIndex - 1 + 4) % 4;
+                    mettreAJourDonneur();
+                }
+
+                // Réafficher l'atout du tour précédent si nécessaire
+                if (historique.length > 0) {
+                    const dernierTour = historique[historique.length - 1];
+                    atoutActuel = dernierTour.atout;
+                    const atoutDisplay = document.getElementById("atoutDisplay");
+                    let colorClass = "text-dark";
+                    if (dernierTour.atout === "♥" || dernierTour.atout === "♦") {
+                        colorClass = "text-danger";
+                    }
+                    atoutDisplay.innerHTML = `<span class="${colorClass}" style="font-size: 3rem;">${dernierTour.atout}</span>`;
+                } else {
+                    atoutActuel = "";
+                    document.getElementById("atoutDisplay").innerHTML = "";
+                }
+            }
+
+            // Fonction pour l'annonce vocale
+            function annonceVocale() {
+                const message = `Messieurs-dames, les scores actuels sont : ${nomsEquipes[0]} ${scores[0]}, ${nomsEquipes[1]} ${scores[1]}. Le donneur est ${donneurs[donneurIndex]}.`;
+                const utterance = new SpeechSynthesisUtterance(message);
+                window.speechSynthesis.speak(utterance);
+            }
+
+            // Fonction pour Belote
+            function belote() {
+                const equipeSelectionnee = parseInt(document.querySelector('input[name="equipeSelectionnee"]:checked').value);
+                scores[equipeSelectionnee] += 20;
+                document.getElementById(`scoreEquipe${equipeSelectionnee + 1}`).textContent = scores[equipeSelectionnee];
+
+                // Mettre à jour l'historique
+                if (historique.length > 0) {
+                    historique[historique.length - 1].evenement += "Belote ";
+
+                    // Mettre à jour l'historique visuel
+                    const tableau = document.getElementById("tableauHistorique");
+                    if (tableau.rows.length > 1) {
+                        const derniereLigne = tableau.rows[tableau.rows.length - 1];
+                        derniereLigne.cells[5].textContent = historique[historique.length - 1].evenement;
+                    }
+                }
+
+                const message = `Belote annoncée ! 20 points pour l'équipe ${nomsEquipes[equipeSelectionnee]}.`;
+                const utterance = new SpeechSynthesisUtterance(message);
+                window.speechSynthesis.speak(utterance);
+            }
+
+            // Fonction pour Capot
+            function capot() {
+                const equipeSelectionnee = parseInt(document.querySelector('input[name="equipeSelectionnee"]:checked').value);
+                scores[equipeSelectionnee] += 250;
+                document.getElementById(`scoreEquipe${equipeSelectionnee + 1}`).textContent = scores[equipeSelectionnee];
+
+                // Ajouter un tour spécial pour le capot
+                historique.push({
+                    tour: tourActuel,
+                    points1: 0,
+                    points2: 0,
+                    atout: "",
+                    donneur: donneurs[donneurIndex],
+                    evenement: "Capot"
+                });
+
+                // Mettre à jour l'historique visuel
+                const tableau = document.getElementById("tableauHistorique");
+                const nouvelleLigne = tableau.insertRow();
+                const celluleTour = nouvelleLigne.insertCell(0);
+                const celluleEquipe1 = nouvelleLigne.insertCell(1);
+                const celluleEquipe2 = nouvelleLigne.insertCell(2);
+                const celluleAtout = nouvelleLigne.insertCell(3);
+                const celluleDonneur = nouvelleLigne.insertCell(4);
+                const celluleEvenement = nouvelleLigne.insertCell(5);
+
+                celluleTour.textContent = tourActuel;
+                celluleEquipe1.textContent = "-";
+                celluleEquipe2.textContent = "-";
+                celluleAtout.textContent = "-";
+                celluleDonneur.textContent = donneurs[donneurIndex];
+                celluleEvenement.textContent = "Capot";
+
+                const message = `Capot annoncé ! 250 points pour l'équipe ${nomsEquipes[equipeSelectionnee]}.`;
+                const utterance = new SpeechSynthesisUtterance(message);
+                window.speechSynthesis.speak(utterance);
+            }
+
+            // Fonction pour gérer la fin de partie
+            function finPartie() {
+                let messageGagnant;
+                let messagePerdu;
+                if (scores[0] > scores[1]) {
+                    messageGagnant = `L'équipe gagnante est ${nomsEquipes[0]} avec ${scores[0]} points.`;
+                    messagePerdu = `L'équipe perdante est ${nomsEquipes[1]} avec ${scores[1]} points.`;
+                } else if (scores[1] > scores[0]) {
+                    messageGagnant = `L'équipe gagnante est ${nomsEquipes[1]} avec ${scores[1]} points.`;
+                    messagePerdu = `L'équipe perdante est ${nomsEquipes[0]} avec ${scores[0]} points.`;
+                } else {
+                    messageGagnant = `La partie se termine sur une égalité entre ${nomsEquipes[0]} et ${nomsEquipes[1]} avec ${scores[0]} points chacun.`;
+                    messagePerdu = "";
+                }
+
+                // Annonce du gagnant
+                const utteranceGagnant = new SpeechSynthesisUtterance(messageGagnant);
+                window.speechSynthesis.speak(utteranceGagnant);
+
+                // Annonce du perdant après un délai
+                if (messagePerdu) {
+                    setTimeout(() => {
+                        const utterancePerdu = new SpeechSynthesisUtterance(messagePerdu);
+                        window.speechSynthesis.speak(utterancePerdu);
+                    }, 3000);
+                }
+            }
+
+            // Fonction pour confirmer une nouvelle partie
+            function confirmationNouvellePartie() {
+                if (confirm("Êtes-vous sûr de vouloir quitter la partie en cours ? Tous les scores seront perdus.")) {
+                    // Réinitialiser les variables globales
+                    tourActuel = 1;
+                    scores = [0, 0];
+                    historique = [];
+                    atoutActuel = "";
+                    atoutIconClass = "";
+                    atoutColorClass = "";
+                    equipeActive = 1;
+                    partieCommencee = false;
+                    donneurIndex = 0;
+
+                    // Réinitialiser l'affichage
+                    document.getElementById("scoreEquipe1").textContent = "0";
+                    document.getElementById("scoreEquipe2").textContent = "0";
+                    document.getElementById("tourActuel").textContent = "1/12";
+                    document.getElementById("atoutDisplay").innerHTML = "";
+                    document.getElementById("pointsEquipe1").value = "";
+                    document.getElementById("pointsEquipe2").value = "";
+                    document.getElementById("donneur").textContent = "Aucun";
+
+                    // Réinitialiser complètement le tableau d'historique
+                    const tableau = document.getElementById("tableauHistorique");
+                    while (tableau.rows.length > 1) {
+                        tableau.deleteRow(1);
+                    }
+
+                    // Réafficher la modale pour les noms des joueurs
+                    const modal = new bootstrap.Modal(document.getElementById("saisieJoueursModal"));
+                    modal.show();
+                }
+            }
+
+            // Fonction pour détecter la fermeture de l'onglet ou de la fenêtre
+            window.addEventListener('beforeunload', function(e) {
+                if (partieCommencee) {
+                    e.preventDefault();
+                    e.returnValue = 'Êtes-vous sûr de vouloir quitter ? Vos données ne seront pas sauvegardées.';
+                }
+            });
+
+            // Afficher la modale au chargement de la page
+            window.onload = function() {
+                const modal = new bootstrap.Modal(document.getElementById('saisieJoueursModal'));
+                modal.show();
+            };
+        </script>
+
+        <!-- Service Worker -->
+        <script>
+          if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+              navigator.serviceWorker.register('sw.js').then(function(registration) {
+                console.log('ServiceWorker registration successful');
+              }, function(err) {
+                console.log('ServiceWorker registration failed: ', err);
+              });
+            });
+          }
+        </script>
+
+</body>
+</html>
+
+            // Fonction pour annuler la dernière saisie
+            function annulerDerniereSaisie() {
+                if (historique.length === 0) {
+                    alert("Il n'y a pas de saisie à annuler.");
+                    return;
+                }
+
+                // Récupérer la dernière saisie
+                const derniereSaisie = historique.pop();
+                const tableau = document.getElementById("tableauHistorique");
+
+                // Retirer la dernière ligne du tableau
+                if (tableau.rows.length > 1) {
+                    tableau.deleteRow(tableau.rows.length - 1);
+                }
+
+                // Mettre à jour les scores
+                scores[0] -= derniereSaisie.points1;
+                scores[1] -= derniereSaisie.points2;
+
+                // Mettre à jour l'affichage
+                document.getElementById("scoreEquipe1").textContent = scores[0];
+                document.getElementById("scoreEquipe2").textContent = scores[1];
+
+                // Mettre à jour le tour actuel
+                if (tourActuel > 1) {
+                    tourActuel--;
+                    document.getElementById("tourActuel").textContent = `${tourActuel}/12`;
+
+                    // Reculer le donneur
+                    donneurIndex = (donneurIndex - 1 + 4) % 4;
+                    mettreAJourDonneur();
+                }
+
+                // Réafficher l'atout du tour précédent si nécessaire
+                if (historique.length > 0) {
+                    const dernierTour = historique[historique.length - 1];
+                    atoutActuel = dernierTour.atout;
+                    const atoutDisplay = document.getElementById("atoutDisplay");
+                    let colorClass = "text-dark";
+                    if (dernierTour.atout === "♥" || dernierTour.atout === "♦") {
+                        colorClass = "text-danger";
+                    }
+                    atoutDisplay.innerHTML = `<span class="${colorClass}" style="font-size: 3rem;">${dernierTour.atout}</span>`;
+                } else {
+                    atoutActuel = "";
+                    document.getElementById("atoutDisplay").innerHTML = "";
+                }
+            }
+
+            // Fonction pour l'annonce vocale
+            function annonceVocale() {
+                const message = `Messieurs-dames, les scores actuels sont : ${nomsEquipes[0]} ${scores[0]}, ${nomsEquipes[1]} ${scores[1]}. Le donneur est ${donneurs[donneurIndex]}.`;
+                const utterance = new SpeechSynthesisUtterance(message);
+                window.speechSynthesis.speak(utterance);
+            }
+
+            // Fonction pour Belote
+            function belote() {
+                const equipeSelectionnee = parseInt(document.querySelector('input[name="equipeSelectionnee"]:checked').value);
+                scores[equipeSelectionnee] += 20;
+                document.getElementById(`scoreEquipe${equipeSelectionnee + 1}`).textContent = scores[equipeSelectionnee];
+
+                // Mettre à jour l'historique
+                if (historique.length > 0) {
+                    historique[historique.length - 1].evenement += "Belote ";
+
+                    // Mettre à jour l'historique visuel
+                    const tableau = document.getElementById("tableauHistorique");
+                    if (tableau.rows.length > 1) {
+                        const derniereLigne = tableau.rows[tableau.rows.length - 1];
+                        derniereLigne.cells[5].textContent = historique[historique.length - 1].evenement;
+                    }
+                }
+
+                const message = `Belote annoncée ! 20 points pour l'équipe ${nomsEquipes[equipeSelectionnee]}.`;
+                const utterance = new SpeechSynthesisUtterance(message);
+                window.speechSynthesis.speak(utterance);
+            }
+
+            // Fonction pour Capot
+            function capot() {
+                const equipeSelectionnee = parseInt(document.querySelector('input[name="equipeSelectionnee"]:checked').value);
+                scores[equipeSelectionnee] += 250;
+                document.getElementById(`scoreEquipe${equipeSelectionnee + 1}`).textContent = scores[equipeSelectionnee];
+
+                // Ajouter un tour spécial pour le capot
+                historique.push({
+                    tour: tourActuel,
+                    points1: 0,
+                    points2: 0,
+                    atout: "",
+                    donneur: donneurs[donneurIndex],
+                    evenement: "Capot"
+                });
+
+                // Mettre à jour l'historique visuel
+                const tableau = document.getElementById("tableauHistorique");
+                const nouvelleLigne = tableau.insertRow();
+                const celluleTour = nouvelleLigne.insertCell(0);
+                const celluleEquipe1 = nouvelleLigne.insertCell(1);
+                const celluleEquipe2 = nouvelleLigne.insertCell(2);
+                const celluleAtout = nouvelleLigne.insertCell(3);
+                const celluleDonneur = nouvelleLigne.insertCell(4);
+                const celluleEvenement = nouvelleLigne.insertCell(5);
+
+                celluleTour.textContent = tourActuel;
+                celluleEquipe1.textContent = "-";
+                celluleEquipe2.textContent = "-";
+                celluleAtout.textContent = "-";
+                celluleDonneur.textContent = donneurs[donneurIndex];
+                celluleEvenement.textContent = "Capot";
+
+                const message = `Capot annoncé ! 250 points pour l'équipe ${nomsEquipes[equipeSelectionnee]}.`;
+                const utterance = new SpeechSynthesisUtterance(message);
+                window.speechSynthesis.speak(utterance);
+            }
+
+            // Fonction pour gérer la fin de partie
+            function finPartie() {
+                let messageGagnant;
+                let messagePerdu;
+                if (scores[0] > scores[1]) {
+                    messageGagnant = `L'équipe gagnante est ${nomsEquipes[0]} avec ${scores[0]} points.`;
+                    messagePerdu = `L'équipe perdante est ${nomsEquipes[1]} avec ${scores[1]} points.`;
+                } else if (scores[1] > scores[0]) {
+                    messageGagnant = `L'équipe gagnante est ${nomsEquipes[1]} avec ${scores[1]} points.`;
+                    messagePerdu = `L'équipe perdante est ${nomsEquipes[0]} avec ${scores[0]} points.`;
+                } else {
+                    messageGagnant = `La partie se termine sur une égalité entre ${nomsEquipes[0]} et ${nomsEquipes[1]} avec ${scores[0]} points chacun.`;
+                    messagePerdu = "";
+                }
+
+                // Annonce du gagnant
+                const utteranceGagnant = new SpeechSynthesisUtterance(messageGagnant);
+                window.speechSynthesis.speak(utteranceGagnant);
+
+                // Annonce du perdant après un délai
+                if (messagePerdu) {
+                    setTimeout(() => {
+                        const utterancePerdu = new SpeechSynthesisUtterance(messagePerdu);
+                        window.speechSynthesis.speak(utterancePerdu);
+                    }, 3000);
+                }
+            }
+
+            // Fonction pour confirmer une nouvelle partie
+            function confirmationNouvellePartie() {
+                if (confirm("Êtes-vous sûr de vouloir quitter la partie en cours ? Tous les scores seront perdus.")) {
+                    // Réinitialiser les variables globales
+                    tourActuel = 1;
+                    scores = [0, 0];
+                    historique = [];
+                    atoutActuel = "";
+                    atoutIconClass = "";
+                    atoutColorClass = "";
+                    equipeActive = 1;
+                    partieCommencee = false;
+                    donneurIndex = 0;
+
+                    // Réinitialiser l'affichage
+                    document.getElementById("scoreEquipe1").textContent = "0";
+                    document.getElementById("scoreEquipe2").textContent = "0";
+                    document.getElementById("tourActuel").textContent = "1/12";
+                    document.getElementById("atoutDisplay").innerHTML = "";
+                    document.getElementById("pointsEquipe1").value = "";
+                    document.getElementById("pointsEquipe2").value = "";
+                    document.getElementById("donneur").textContent = "Aucun";
+
+                    // Réinitialiser complètement le tableau d'historique
+                    const tableau = document.getElementById("tableauHistorique");
+                    while (tableau.rows.length > 1) {
+                        tableau.deleteRow(1);
+                    }
+
+                    // Réafficher la modale pour les noms des joueurs
+                    const modal = new bootstrap.Modal(document.getElementById("saisieJoueursModal"));
+                    modal.show();
+                }
+            }
+
+            // Fonction pour détecter la fermeture de l'onglet ou de la fenêtre
+            window.addEventListener('beforeunload', function(e) {
+                if (partieCommencee) {
+                    e.preventDefault();
+                    e.returnValue = 'Êtes-vous sûr de vouloir quitter ? Vos données ne seront pas sauvegardées.';
+                }
+            });
+
+            // Afficher la modale au chargement de la page
+            window.onload = function() {
+                const modal = new bootstrap.Modal(document.getElementById('saisieJoueursModal'));
+                modal.show();
+            };
+        </script>
+
+        <!-- Service Worker -->
+        <script>
+          if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+              navigator.serviceWorker.register('sw.js').then(function(registration) {
+                console.log('ServiceWorker registration successful');
+              }, function(err) {
+                console.log('ServiceWorker registration failed: ', err);
+              });
+            });
+          }
+        </script>
+
+</body>
+</html>
+

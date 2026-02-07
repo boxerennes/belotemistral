@@ -1,0 +1,21 @@
+{
+  "name": "Belote / C. Gasnier",
+  "short_name": "Belote",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#2E8B57",
+  "theme_color": "#3CB371",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+
